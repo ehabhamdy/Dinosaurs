@@ -12,6 +12,17 @@ function Dino(species, weight, height, diet, where, when, facts, img) {
   this.img = img;
 }
 
+function Bird(species, weight, height, diet, where, when, fact, img) {
+  this.species = species;
+  this.weight = weight;
+  this.height = height;
+  this.diet = diet;
+  this.where = where;
+  this.when = when;
+  this.fact = fact;
+  this.img = img;
+}
+
 // Create Dino Objects
 let deno1 = new Dino(
   "Triceratops",
@@ -104,21 +115,21 @@ let deno7 = new Dino(
   "./images/pteranodon.png"
 );
 
-let deno8 = new Dino(
+let bird8 = new Bird(
   "Pigeon",
   0.5,
   9,
   "herbavor",
   "World Wide",
   "Holocene",
-  ["All birds are living dinosaurs."],
+  "All birds are living dinosaurs.",
   "./images/pigeon.png"
 );
 
 // Create Dino Compare Method 1
 // NOTE: Weight in JSON file is in lbs, height in inches.
-Dino.prototype.compareWeight = function(human) {
-  if(this.species !== human.species) {
+Dino.prototype.compareWeight = function (human) {
+  if (this.species !== human.species) {
     if (this.weight > human.weight) {
       this.facts.push(`${this.species} is heavier than ${human.species}`)
     } else {
@@ -129,27 +140,27 @@ Dino.prototype.compareWeight = function(human) {
 
 // Create Dino Compare Method 2
 // NOTE: Weight in JSON file is in lbs, height in inches.
-Dino.prototype.compareHight = function(human) {
-  if(this.species !== human.species) {
+Dino.prototype.compareHight = function (human) {
+  if (this.species !== human.species) {
     if (this.height > human.height) {
       this.facts.push(`${this.species} is taller than ${human.species}`)
     } else {
       this.facts.push(`${this.species} is shorter than ${human.species}`)
     }
   }
- 
+
 };
 
 // Create Dino Compare Method 3
 // NOTE: Weight in JSON file is in lbs, height in inches.
-Dino.prototype.compareDiet = function(human) {
-  if(this.species !== human.species) {
+Dino.prototype.compareDiet = function (human) {
+  if (this.species !== human.species) {
     this.facts.push(`${this.species} eats ${this.diet} while ${human.species} lives on ${human.diet}`)
   }
 };
 
 function shuffle(array) {
-  var currentIndex = array.length,
+  let currentIndex = array.length,
     temporaryValue,
     randomIndex;
 
@@ -184,7 +195,7 @@ grid.style.display = "none";
 const compareButton = document.getElementById("btn");
 const form = document.getElementById("dino-compare");
 
-compareButton.addEventListener("click", function() {
+compareButton.addEventListener("click", function () {
   form.style.display = "none";
   grid.style.display = "flex";
 
@@ -194,7 +205,7 @@ compareButton.addEventListener("click", function() {
 
     const feetHeightInput = document.getElementById("feet").value;
     const inchesHeightInput = document.getElementById("inches").value;
-    const totalHeight = feetHeightInput*12 + inchesHeightInput
+    const totalHeight = feetHeightInput * 12 + inchesHeightInput
     console.log("asjfsdhjfhajsdf", totalHeight)
     const weightInput = document.getElementById("weight").value;
     const dietInput = document.getElementById("diet").value;
@@ -222,7 +233,7 @@ compareButton.addEventListener("click", function() {
     deno5,
     deno6,
     deno7,
-    deno8
+    bird8
   ];
 
   const randomizedDenosArray = shuffle(denosArray);
@@ -231,9 +242,11 @@ compareButton.addEventListener("click", function() {
     return `
           ${randomizedDenosArray
             .map(deno => {
-              deno.compareWeight(humanFromForm);
-              deno.compareHight(humanFromForm);
-              deno.compareDiet(humanFromForm);
+              if(deno instanceof Dino) {
+                deno.compareWeight(humanFromForm);
+                deno.compareHight(humanFromForm);
+                deno.compareDiet(humanFromForm);
+              }
               return deno
             })
             .map(
@@ -242,7 +255,7 @@ compareButton.addEventListener("click", function() {
                 <h3>${deno.species}</h3>
                 <img src="${deno.img}" />
                 <p> 
-                    ${deno.facts[Math.floor(Math.random() * deno.facts.length)]}
+                    ${(deno instanceof Dino)? deno.facts[Math.floor(Math.random() * deno.facts.length)] : deno.fact }
                 </p>
               </div>
             `
