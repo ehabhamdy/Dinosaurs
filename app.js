@@ -1,14 +1,14 @@
 "use strict";
 
 // Create Dino Constructor
-function Dino(species, weight, height, diet, where, when, fact, img) {
+function Dino(species, weight, height, diet, where, when, facts, img) {
   this.species = species;
   this.weight = weight;
   this.height = height;
   this.diet = diet;
   this.where = where;
   this.when = when;
-  this.fact = fact;
+  this.facts = facts;
   this.img = img;
 }
 
@@ -21,8 +21,7 @@ let deno1 = new Dino(
   "North America",
   "Late Cretaceous",
   [
-    "The largest known skull measures in at 5 feet long.",
-    "Triceratops Fact #2"
+    "First discovered in 1889 by Othniel Charles Marsh"
   ],
   "./images/triceratops.png"
 );
@@ -35,8 +34,7 @@ let deno2 = new Dino(
   "North America",
   "Late Cretaceous",
   [
-    "The largest known skull measures in at 5 feet long.",
-    "Tyrannosaurus Rex Fact #2"
+    "The largest known skull measures in at 5 feet long."
   ],
   "./images/tyrannosaurus rex.png"
 );
@@ -49,8 +47,7 @@ let deno3 = new Dino(
   "North America",
   "Late Cretaceous",
   [
-    "Anklyosaurus survived for approximately 135 million years.",
-    "Anklyosaurus Fact #2"
+    "Anklyosaurus survived for approximately 135 million years."
   ],
   "./images/anklyosaurus.png"
 );
@@ -63,8 +60,7 @@ let deno4 = new Dino(
   "North America",
   "Late Jurasic",
   [
-    "An asteroid was named 9954 Brachiosaurus in 1991.",
-    "Brachiosaurus Fact #2"
+    "An asteroid was named 9954 Brachiosaurus in 1991."
   ],
   "./images/brachiosaurus.png"
 );
@@ -77,8 +73,7 @@ let deno5 = new Dino(
   "North America, Europe, Asia",
   "Late Jurasic to Early Cretaceous",
   [
-    "The Stegosaurus had between 17 and 22 seperate places and flat spines.",
-    "Stegosaurus Fact #2"
+    "The Stegosaurus had between 17 and 22 seperate places and flat spines."
   ],
   "./images/stegosaurus.png"
 );
@@ -91,8 +86,7 @@ let deno6 = new Dino(
   "North America",
   "Late Cretaceous",
   [
-    "Elasmosaurus was a marine reptile first discovered in Kansas.",
-    "Elasmosaurus Fact #2"
+    "Elasmosaurus was a marine reptile first discovered in Kansas."
   ],
   "./images/elasmosaurus.png"
 );
@@ -105,8 +99,7 @@ let deno7 = new Dino(
   "North America",
   "Late Cretaceous",
   [
-    "Actually a flying reptile, the Pteranodon is not a dinosaur.",
-    "Pteranodon Fact #2"
+    "Actually a flying reptile, the Pteranodon is not a dinosaur."
   ],
   "./images/pteranodon.png"
 );
@@ -118,30 +111,41 @@ let deno8 = new Dino(
   "herbavor",
   "World Wide",
   "Holocene",
-  ["All birds are living dinosaurs.", "Pigeon Fact #2"],
+  ["All birds are living dinosaurs."],
   "./images/pigeon.png"
 );
 
 // Create Dino Compare Method 1
 // NOTE: Weight in JSON file is in lbs, height in inches.
-Dino.prototype.compareName = function(dinoToCompare) {
-  return `${this.species} vs ${dinoToCompare.species}`;
+Dino.prototype.compareWeight = function(human) {
+  if(this.species !== human.species) {
+    if (this.weight > human.weight) {
+      this.facts.push(`${this.species} is heavier than ${human.species}`)
+    } else {
+      this.facts.push(`${human.species} is heavier than ${this.species}`)
+    }
+  }
 };
 
 // Create Dino Compare Method 2
 // NOTE: Weight in JSON file is in lbs, height in inches.
-Dino.prototype.compareHight = function(dinoToCompare) {
-  if (this.height > dinoToCompare.height) {
-    return "Dino is taller";
-  } else {
-    return "Human is taller";
+Dino.prototype.compareHight = function(human) {
+  if(this.species !== human.species) {
+    if (this.height > human.height) {
+      this.facts.push(`${this.species} is taller than ${human.species}`)
+    } else {
+      this.facts.push(`${this.species} is shorter than ${human.species}`)
+    }
   }
+ 
 };
 
 // Create Dino Compare Method 3
 // NOTE: Weight in JSON file is in lbs, height in inches.
-Dino.prototype.compareDiet = function(dinoToCompare) {
-  return `${this.diet} vs ${dinoToCompare.diet}`;
+Dino.prototype.compareDiet = function(human) {
+  if(this.species !== human.species) {
+    this.facts.push(`${this.species} eats ${this.diet} while ${human.species} lives on ${human.diet}`)
+  }
 };
 
 function shuffle(array) {
@@ -187,7 +191,11 @@ compareButton.addEventListener("click", function() {
   // Use IIFE to get human data from form
   let humanFromForm = (function getHumanData() {
     const nameInput = document.getElementById("name").value;
+
+    const feetHeightInput = document.getElementById("feet").value;
     const inchesHeightInput = document.getElementById("inches").value;
+    const totalHeight = feetHeightInput*12 + inchesHeightInput
+    console.log("asjfsdhjfhajsdf", totalHeight)
     const weightInput = document.getElementById("weight").value;
     const dietInput = document.getElementById("diet").value;
 
@@ -195,7 +203,7 @@ compareButton.addEventListener("click", function() {
     let human = new Dino(
       nameInput,
       weightInput,
-      inchesHeightInput,
+      totalHeight,
       dietInput,
       "Human",
       "Late Cretaceous",
@@ -222,20 +230,25 @@ compareButton.addEventListener("click", function() {
   grid.innerHTML = (() => {
     return `
           ${randomizedDenosArray
+            .map(deno => {
+              deno.compareWeight(humanFromForm);
+              deno.compareHight(humanFromForm);
+              deno.compareDiet(humanFromForm);
+              return deno
+            })
             .map(
               deno => `
               <div class="grid-item">
                 <h3>${deno.species}</h3>
                 <img src="${deno.img}" />
                 <p> 
-                    ${deno.fact[Math.floor(Math.random() * deno.fact.length)]}
-                    <br>
-                    ${deno.compareName(humanFromForm)}
+                    ${deno.facts[Math.floor(Math.random() * deno.facts.length)]}
                 </p>
               </div>
-          `
+            `
             )
-            .join("")}
+            .join("")
+          }
       `;
   })();
 });
