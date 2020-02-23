@@ -1,27 +1,34 @@
 "use strict";
 
 // Create Dino Constructor
-function Dino(species, weight, height, diet, where, when, facts, img) {
+
+function Creature(species, weight, height, diet, img) {
   this.species = species;
   this.weight = weight;
   this.height = height;
   this.diet = diet;
-  this.where = where;
-  this.when = when;
-  this.facts = facts;
   this.img = img;
 }
 
+
+function Dino(species, weight, height, diet, where, when, facts, img) {
+  Creature.call(this, species, weight, height, diet, img)
+  this.where = where;
+  this.when = when;
+  this.facts = facts;
+}
+
+Dino.prototype = Object.create(Creature.prototype)
+
 function Bird(species, weight, height, diet, where, when, fact, img) {
-  this.species = species;
-  this.weight = weight;
-  this.height = height;
-  this.diet = diet;
+  Creature.call(this, species, weight, height, diet, img)
   this.where = where;
   this.when = when;
   this.fact = fact;
-  this.img = img;
 }
+
+Bird.prototype = Object.create(Creature.prototype)
+
 
 // Create Dino Objects
 let deno1 = new Dino(
@@ -206,7 +213,6 @@ compareButton.addEventListener("click", function () {
     const feetHeightInput = document.getElementById("feet").value;
     const inchesHeightInput = document.getElementById("inches").value;
     const totalHeight = feetHeightInput * 12 + inchesHeightInput
-    console.log("asjfsdhjfhajsdf", totalHeight)
     const weightInput = document.getElementById("weight").value;
     const dietInput = document.getElementById("diet").value;
 
